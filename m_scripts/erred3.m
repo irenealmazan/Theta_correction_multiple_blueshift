@@ -69,7 +69,8 @@ for i=1:num
     %return to dp space and apply the 
     A = fftn(D);
     
-    %find a chi fit.
+    %find a chi fit in real space:
+    
     chi(chilen+i,1) = sum(sum(sum( (abs(A)-abs(dp)).^2))) / numel(dp) ;
     figure(hchi);
     plot([1:length(chi)], log10(chi));

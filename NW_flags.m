@@ -1,11 +1,6 @@
 % This scripts contains all the flags to operate NW_masterscript_BCDI.
 
-noiseflag = 0; 
-if(noiseflag) 
-    display('ADDING NOISE')
-else
-    display('NO NOISE')
-end
+
 
 addNWstrain = 1; 
 if(addNWstrain) 
@@ -28,7 +23,7 @@ display(['MAKING A ' whichSample ' SAMPLE'])
 addNWsf = 0; 
 if(addNWsf) display('ADDING STACKING FAULTS');end
 
-addAngJitter = 3;
+addAngJitter = 2;
 switch addAngJitter
     case 0
         display('NO ANGULAR JITTER')
@@ -86,7 +81,7 @@ switch initialGuess
         display('USING AN ALREADY GENERATED INITIAL GUESS')
 end
 
-smoothSupportFlag = 3;
+smoothSupportFlag = 2;
 switch (smoothSupportFlag)
     case 0
         display('USING A SMOOTH SUPPORT')
@@ -98,4 +93,4 @@ switch (smoothSupportFlag)
         display('USING AN ALREADY CREATED ER_HIO SUPPORT')
 end
 
-flagContinue = 1;
+flagContinue = 0;

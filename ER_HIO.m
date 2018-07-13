@@ -3,53 +3,69 @@
 
 % prvepare data (matrix 3D):
 
-if flagERHIOinitial == 1
-    [~,sup_ini,dp] = Phretrieval_functions.prepare_data_ER_HIO(NW,data_exp);
-    
-    er_iter = 150;
-    
-    [retrphase newobj] = erred3( sqrt(dp), sup_ini, er_iter, 10, []);
-    
-    mod_object = abs(newobj.object);
-    support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,[1 1 1]*1e6,X,Y,Z);    
-else
-    [~,~,dp] = Phretrieval_functions.prepare_data_ER_HIO(NW,data_exp);
-    sup_ini = support;
-    er_iter = 200;
-    [retrphase newobj] = erred3( sqrt(dp), support_new, er_iter, 100, []);
-    
-    mod_object = abs(newobj.object);
-    support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,X,Y,Z);    
-end
+original_object = NW*sqrt(mncntrate/mn);
+
+[~,sup_ini,dp] = Phretrieval_functions.prepare_data_ER_HIO(NW,data_exp);
+err_ERHIO = [];
+
+er_iter = 1;
+
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,sup_ini,[],er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
+
+
+
+er_iter = 5;
+
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,sup_ini,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
 
 mod_object = abs(newobj.object);
-support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,X,Y,Z);
+support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,[1 1 1]*1e6,X,Y,Z);
+
+er_iter = 120;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
 
 
-
-er_iter = 20;
-for kk = 1:3
-    [retrphase newobj] = erred3( sqrt(dp), support_new, er_iter, 10, newobj);
-    mod_object = abs(newobj.object);
-    support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,X,Y,Z);
-end
-
-hio_iter = 100;
-
-[retrphase newobj] = hio3( sqrt(dp), support_new,hio_iter, 10, newobj, .7);
+mod_object = abs(newobj.object);
+support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,[1 1 1]*1e6,X,Y,Z);
 
 er_iter = 60;
-for kk = 1:3
-    [retrphase newobj] = erred3( sqrt(dp), support_new, er_iter, 10, newobj);
-     mod_object = abs(newobj.object);
-    support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,X,Y,Z);
-end
-[retrphase newobj] = erred3( sqrt(dp), support_new, er_iter, 10, newobj);
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
+
+
+hio_iter = 100;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_HIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
+
+er_iter = 120;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
+
+mod_object = abs(newobj.object);
+support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,[1 1 1]*1e6,X,Y,Z);
+
+er_iter = 60;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
+
+hio_iter = 100;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_HIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
+
+er_iter = 120;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
+
+mod_object = abs(newobj.object);
+support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,[1 1 1]*1e6,X,Y,Z);
+
+er_iter = 60;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
+
+hio_iter = 50;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_HIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
+
+er_iter = 180;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z);
+
 
 
 finalobj = (ifftn(newobj.dp));
 
-save('ER_HIO_initial_guess','newobj','support_new');
 
 if plotResults
     original_object = NW*sqrt(mncntrate/mn);

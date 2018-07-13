@@ -255,6 +255,31 @@ classdef DiffractionPatterns
             
         end
         
+        function [rho_final_shift] = shift_object(rho_original,rho_final,angles_list,ki,kf,qbragg,d2_bragg,X,Y,Z)
+           
+             Npix = size(X,1);
+            depth = size(X,3);
+            
+             % calculate a list of momentum transfers:
+            [dqshift] = DiffractionPatterns.calc_dqshift_for_given_th(angles_list,ki,kf,qbragg);
+            
+            [X_recip,Y_recip,Z_recip, qz_pixel_size] = DiffractionPatterns.calc_reciprocal_space(dqshift,Npix,depth,d2_bragg);
+           
+            [autocorr,rho_final_shift] = DiffractionPatterns.calc_autocorr_shift_object(rho_original,rho_final,X,Y,Z,X_recip,Y_recip,Z_recip);
+           
+            
+        end
+        
+        
+         function [err_final] = calculate_error_realspace(rho_original,rho_final)
+            
+            error_3D = (rho_final-rho_original);
+            error_3D_mod = error_3D(:)'*error_3D(:);
+            err_final = error_3D_mod/numel(error_3D);
+            
+        end
+      
+        
     end
 end
     

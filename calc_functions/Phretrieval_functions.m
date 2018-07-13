@@ -136,7 +136,7 @@ classdef Phretrieval_functions
             
         end
                 
-        function [rho_new,beta_rho,norm_gradient,gPIEiter,direction_rho] = rho_update(probe, rho,gPIEiter_old,direction_rho_old,angles_list,support,niter, data_exp,depth,err_0,freq_restart,tau_backtrack,beta_ini,counter_max,ki,kf,X,Y,Z,ERflag)
+        function [rho_new,beta_rho,norm_gradient,gPIEiter,direction_rho] = rho_update(probe, rho,gPIEiter_old,direction_rho_old,angles_list,support,niter, data_exp,depth,err_0,freq_restart,tau_backtrack,beta_ini,counter_max,ki,kf,X,Y,Z)
             % this functions updates rho
             
             % gradient calculation
@@ -260,6 +260,36 @@ classdef Phretrieval_functions
            end
             
         end
+        
+        function  [retrphase,newobj,err_ERHIO] = do_ER(err_ERHIO,dp,support,newobj,er_iter,NW,angles_list,ki,kf,probe,d2_bragg,X,Y,Z)
+            
+            
+            for jj = 1:er_iter
+                [retrphase newobj] = erred3( sqrt(dp),support,1, 10000, newobj);
+                finalobj = (ifftn(conj(newobj.dp)));
+                [finalobj_shift] = DiffractionPatterns.shift_object(NW,finalobj,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);
+                finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj_shift,angles_list,probe,ki,kf,X,Y,Z);
+                err = DiffractionPatterns.calculate_error_realspace(NW,finalobj_2DFT);
+                err_ERHIO = [err_ERHIO err];
+            end
+            
+            
+        end
+        
+         function  [retrphase,newobj,err_ERHIO] = do_HIO(err_ERHIO,dp,support,newobj,er_iter,NW,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z)
+            
+            
+            for jj = 1:er_iter
+                [retrphase newobj] = hio3( sqrt(dp),support,1, 10000, newobj);
+                finalobj = (ifftn(conj(newobj.dp)));
+                finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj,delta_thscanvals,probe,ki_o,kf_o,X,Y,Z);
+                err = DiffractionPatterns.calculate_error_realspace(NW,finalobj_2DFT,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z)
+                err_ERHIO = [err_ERHIO err];
+            end
+            
+            
+        end
+        
     end
         
    

@@ -16,44 +16,21 @@ if flagContinue == 0
     
     
      [Niter_rho, Niter_pos,...
-                Niter_theta,freq_pos,freq_store,freq_restart,tau_backtrack_rho,beta_ini_rho,...
+                Niter_theta,freq_pos,freq_store,freq_restart,freq_shrink_wrap,tau_backtrack_rho,beta_ini_rho,...
                 counter_max_rho,tau_backtrack_theta,beta_ini_theta,counter_max_theta] = ...
         InitializeFunctions.NW_experimental_phretrieval_parameters();
     
     
     %% Scattering condition:
-    scatgeo = 2110; %for strain image
-    %scatgeo = 1010; %for stacking-fault image
-    switch scatgeo
-        case 1010 %SF
-            [pixsize,lam,Npix,detdist,d2_bragg,depth,defocus,th,del,gam,...
+     [pixsize,lam,Npix,detdist,d2_bragg,depth,defocus,th,del,gam,...
                 thscanvals,alphavals,phivals,...
-                delta_thscanvals] = InitializeFunctions.NW_scatgeo_1010();          
-        case 2110 %strain
-            [pixsize,lam,Npix,detdist,d2_bragg,depth,defocus,th,del,gam,...
-                thscanvals,alphavals,phivals,...
-                delta_thscanvals] = InitializeFunctions.NW_scatgeo_2110();          
-    end
+                delta_thscanvals] = InitializeFunctions.NW_scatgeo_2110();  
     
-    
-    %% Create sample
+    % scattering geometry
     NW_diff_vectors_BCDI; % does both the vectors ki and kf and creates the object
     
-    if newSample
-        switch whichSample
-            case 'Random'
-                MakeSample;
-            case 'Hexagone'
-                NW_make_InGaAs_nocoreshell_BCDI;
-        end
-        
-        
-        NW = img;
-        
-    else
-        
-        load('../results_files/Original_Sample');
-    end
+   % load sample
+    load('Original_Sample');
     
     if(addNWstrain)
         NW  = img;
@@ -72,15 +49,8 @@ if flagContinue == 0
     NW_add_dp_noise;
     
     %%
-    if initialGuess == 1
-        ER_HIO;
-    elseif initialGuess == 3
-        load('../results_files/ER_HIO_initial_guess');            
-    end
-    
-    if smoothSupportFlag == 3
-        load('../results_files/ER_HIO_initial_guess');            
-    end
+     ER_HIO;
+     save([savefolder '/ER_HIO_initial_guess'],'newobj','support_new');
     
 else
     display('CONTINUING A PHASE RETRIEVAL OPERATION');

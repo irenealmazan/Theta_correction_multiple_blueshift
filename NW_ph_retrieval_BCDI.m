@@ -173,6 +173,12 @@ for nrho = nrho_vect
         cnt_ntheta = cnt_ntheta + 1;
     end
     
+    
+      if nrho == freq_shrink_wrapp          
+         [~,support] = Phretrieval_functions.optimize_support(rho,[0.2],[1 1 1]*2e6,probe,data_exp,angles_list,ki_o,kf_o,X,Y,Z); 
+         rho = rho.*support;
+      end
+    
     if mod(nrho,freq_store) == 0
         save('../results_files/results.mat');
         display(['saving at iteration ' num2str(nrho)])

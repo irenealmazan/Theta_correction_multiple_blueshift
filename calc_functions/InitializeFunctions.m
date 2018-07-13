@@ -8,26 +8,23 @@ classdef InitializeFunctions
     methods(Static)
         
         function [Niter_rho, Niter_pos,...
-                Niter_theta,freq_pos,freq_store,freq_restart,tau_backtrack_rho,beta_ini_rho,...
+                Niter_theta,freq_pos,freq_store,freq_restart,freq_shrink_wrap,tau_backtrack_rho,beta_ini_rho,...
                 counter_max_rho,tau_backtrack_theta,beta_ini_theta,counter_max_theta] = NW_experimental_phretrieval_parameters()
             
             % In this script we initialize the values of the experimental set-up and
             % the details concerning the sample:
-            
-            
-            
-           
-            mncntrate = 1e3;
+          
             
             %% Phase retrieval parameters:
             
             % Iteration parameters:
-            Niter_rho = 8000;
+            Niter_rho = 1;
             Niter_pos = 1;
             Niter_theta = 1;
             freq_pos = 1;
             %freq_rho = 10;
             freq_store = 100;
+            freq_shrink_wrap = 500;
             
             % Beta adaptative step parameters and conjugated gradient restart parameter:
             freq_restart = 20;
