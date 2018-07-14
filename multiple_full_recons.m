@@ -1,4 +1,4 @@
-jitterlevel = [0];
+jitterlevel = [0 5 10 20 40];
 
 for jjj = 1:numel(jitterlevel)
     
@@ -17,5 +17,7 @@ for jjj = 1:numel(jitterlevel)
     mkdir(savefolder);     
     
     NW_masterscript_BCDI;
+    
+    save([savefolder '/results.mat']);
     
 end

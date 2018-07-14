@@ -36,17 +36,17 @@ if flagContinue == 0
          case 0
              support_ini = abs(NW);
              [support_smooth] = Phretrieval_functions.smooth_support(support_ini,X,Y,Z);
-             support = abs(support_smooth/max(support_smooth(:)));
+             support_iter = abs(support_smooth/max(support_smooth(:)));
          case 1
-             support = abs(NW);
+             support_iter = abs(NW);
          case 2
              support_3DFT = support_new;
              support_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support_3DFT,angles_list,probe,ki_o,kf_o,X,Y,Z);
-             support = (support_2DFT > 0.1*max(support_2DFT(:)));
+             support_iter = (support_2DFT > 0.1*max(support_2DFT(:)));
          case 3             
              support_3DFT = support_new;
              support_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support_3DFT,angles_list,probe,ki_o,kf_o,X,Y,Z);
-             support = (support_2DFT > 0.6*max(support_2DFT(:)));
+             support_iter = (support_2DFT > 0.6*max(support_2DFT(:)));
      end
      
     
@@ -54,29 +54,32 @@ if flagContinue == 0
     % initial guess and initial error:
     switch initialGuess
         case 0
-            rho_ini = NW.*support;
+            rho_ini = NW.*support_iter;
             %[scale_fact] = Phretrieval_functions.ini_guess_scalefactor(probe, rho_ini,angles_list, data_exp,ki_o,kf_o,X,Y,Z);
             scale_fact = sqrt(mncntrate/mn);
             rho = rho_ini.*scale_fact ;
         case 1
             rho_3DFT= (ifftn(newobj.dp));
             rho_ini = DiffractionPatterns.From3DFT_to_2DFT(rho_3DFT,angles_list,probe,ki_o,kf_o,X,Y,Z);
-            rho = rho_ini.*support;
+            rho = rho_ini.*support_iter;
         case 2
             
-            %rho_ini = rand(Npix,Npix,depth).* exp(i*2*pi*rand(Npix,Npix,depth)).* support;
-            rho_ini = ones(Npix,Npix,depth).* exp(i*2*pi*rand(Npix,Npix,depth)).* support;
+            %rho_ini = rand(Npix,Npix,depth).* exp(i*2*pi*rand(Npix,Npix,depth)).* support_iter;
+            rho_ini = ones(Npix,Npix,depth).* exp(i*2*pi*rand(Npix,Npix,depth)).* support_iter;
             [scale_fact] = Phretrieval_functions.ini_guess_scalefactor(probe, rho_ini,angles_list, data_exp,ki_o,kf_o,X,Y,Z);
             rho = rho_ini.*scale_fact ;
          case 3
             rho_3DFT= (ifftn(newobj.dp));
             rho_ini = DiffractionPatterns.From3DFT_to_2DFT(rho_3DFT,angles_list,probe,ki_o,kf_o,X,Y,Z);
-            rho = rho_ini.*support;            
+            rho = rho_ini.*support_iter;            
     end
   
    
-     [err_ini] = DiffractionPatterns.calc_error_multiangle(probe, rho.*support, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
-    
+     [err_ini] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
+     rho_conj = ifftn(conj(fftn(rho)));
+     [rho_shift] = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+     err_direct = DiffractionPatterns.calculate_error_realspace(NW*sqrt(mncntrate/mn),rho_shift);
+     
     % initial value of the gradient in rho and theta, assumed to be zero
     norm_grad_rho = zeros(Niter_rho,1);
     beta_rho = zeros(Niter_rho,1);
@@ -84,7 +87,8 @@ if flagContinue == 0
     beta_theta = zeros(round(Niter_rho/freq_pos),1);
     
     errlist = [err_ini];   
-    fprintf('initial  error: %4.4d \n',errlist);
+    errlist_direct = [err_direct];
+    fprintf('initial  error in reciprocal space: %4.4d  and in direct space: %4.4d \n',errlist,errlist_direct);
     
     % number of iterations
     nrho_vect = [1:Niter_rho];
@@ -107,11 +111,11 @@ else
     % remultiply rho by support: 1) if support remained unchanged, then
     % this won't make any change. 2) if the support has changed
     % (shrink-wrap) then it should provide a sort of new rho_ini
-    rho = rho.*support;
+    rho = rho.*support_iter;
 end
 
 if plotResults
-    DisplayResults.show_rho_theta_update(5,errlist,rho.*support,midsl,angles_list,delta_thscanvals'+dth_disp,norm_grad_rho(1),beta_rho(1),norm_grad_theta(1),beta_theta(1),'Ini');
+    DisplayResults.show_rho_theta_update(5,errlist,rho.*support_iter,midsl,angles_list,delta_thscanvals'+dth_disp,norm_grad_rho(1),beta_rho(1),norm_grad_theta(1),beta_theta(1),'Ini');
 end
 
 
@@ -128,11 +132,19 @@ for nrho = nrho_vect
     if(1)
            
   
-        [rho,beta_rho(nrho),norm_grad_rho(nrho),gPIEiter,direction_rho] = Phretrieval_functions.rho_update(probe, rho,gPIEiter,direction_rho,angles_list,support, nrho, data_exp,depth,errlist(end),freq_restart,tau_backtrack_rho,beta_ini_rho,counter_max_rho,ki_o,kf_o,X,Y,Z,ERflag(nrho));
+        [rho,beta_rho(nrho),norm_grad_rho(nrho),gPIEiter,direction_rho] = Phretrieval_functions.rho_update(probe, rho,gPIEiter,direction_rho,angles_list,support_iter, nrho, data_exp,depth,errlist(end),freq_restart,tau_backtrack_rho,beta_ini_rho,counter_max_rho,ki_o,kf_o,X,Y,Z);
         
         [err] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
-        fprintf('     error: %4.4d     norm_grad_rho: %4.4d \n', err,norm_grad_rho(nrho));
+        
+        rho_conj = ifftn(conj(fftn(rho)));
+        [rho_shift] = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+        [err_direct] = DiffractionPatterns.calculate_error_realspace(NW*sqrt(mncntrate/mn),rho_shift);
+        
         errlist = [errlist err];
+        errlist_direct = [errlist_direct err_direct];
+        
+        fprintf('     error reciprocal: %4.4d   error direct space: %4.4d     norm_grad_rho: %4.4d \n', err,err_direct,norm_grad_rho(nrho));
+
         
         % store the current reconstruction:
         rho_store(nrho).rho_square = rho(:,:,midsl);
@@ -162,8 +174,15 @@ for nrho = nrho_vect
         end
 
         [err] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
-        fprintf('    error: %4.4d     norm_grad_theta: %4.4d \n', err,norm_grad_theta(cnt_ntheta));
+        
+        rho_conj = ifftn(conj(fftn(rho)));
+        [rho_shift] = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+        [err_direct] = DiffractionPatterns.calculate_error_realspace(NW*sqrt(mncntrate/mn),rho_shift);
+        
         errlist = [errlist err];
+        errlist_direct = [errlist_direct err_direct];
+        
+        fprintf('     error reciprocal: %4.4d   error direct space: %4.4d     norm_grad_theta: %4.4d \n', err,err_direct,norm_grad_theta(cnt_ntheta));
        
         % plot
         if plotResults
@@ -174,13 +193,13 @@ for nrho = nrho_vect
     end
     
     
-      if nrho == freq_shrink_wrapp          
-         [~,support] = Phretrieval_functions.optimize_support(rho,[0.2],[1 1 1]*2e6,probe,data_exp,angles_list,ki_o,kf_o,X,Y,Z); 
-         rho = rho.*support;
+      if nrho == freq_shrink_wrap          
+         [~,support_iter] = Phretrieval_functions.optimize_support(rho,[0.2],[1 1 1]*2e6,probe,data_exp,angles_list,ki_o,kf_o,X,Y,Z); 
+         rho = rho.*support_iter;
       end
     
     if mod(nrho,freq_store) == 0
-        save('../results_files/results.mat');
+        save([savefolder '/results.mat']);
         display(['saving at iteration ' num2str(nrho)])
     end
 

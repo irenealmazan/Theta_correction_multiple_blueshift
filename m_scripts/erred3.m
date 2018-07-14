@@ -1,4 +1,4 @@
-function [retrphase newobj] = erred3(dp, support, num, savenum, prevobj)
+function [retrphase newobj] = erred3(dp, support, num, savenum, prevobj,plotResults)
 
 dp = abs(dp);
 
@@ -9,21 +9,24 @@ D=zeros(size(dp));
 
 %ssqexpamp = sum(sum(sum(abs(dp.^2))));
 
-if isempty( findobj('Name', 'phasing'))
-    hfig = figure;
-    set(gcf, 'Name','phasing');
-else
-    hfig = findobj('Name', 'phasing');
+if plotResults
+    if isempty( findobj('Name', 'phasing'))
+        hfig = figure;
+        set(gcf, 'Name','phasing');
+    else
+        hfig = findobj('Name', 'phasing');
+    end
+    
+    if isempty( findobj('Name', 'chi'))
+        hchi = figure;
+        set(gcf, 'Name','chi');
+    else
+        hchi = findobj('Name', 'chi');
+    end
+    
+    
+    figure(hchi);clf;
 end
-
-if isempty( findobj('Name', 'chi'))
-    hchi = figure;
-    set(gcf, 'Name','chi');
-else
-    hchi = findobj('Name', 'chi');
-end
-
-figure(hchi);clf;
 
 %initial guess as to the phase of the DP comes from a FT of the support
 if isempty(prevobj) 
@@ -72,16 +75,19 @@ for i=1:num
     %find a chi fit in real space:
     
     chi(chilen+i,1) = sum(sum(sum( (abs(A)-abs(dp)).^2))) / numel(dp) ;
-    figure(hchi);
-    plot([1:length(chi)], log10(chi));
-    title(['chi fit is ' num2str(chi(i,1))]);
-    ylabel('log chi');
-    
-    waitbar(i/num,h);
+    if plotResults
+        figure(hchi);
+        plot([1:length(chi)], log10(chi));
+        title(['chi fit is ' num2str(chi(i,1))]);
+        ylabel('log chi');
+        
+        waitbar(i/num,h);
+    end
 end
 
+if plotResults
 close(h);
-
+end
 %imagesc(angle(A));
 
 %retrphase = abs(dp).*exp(sqrt(-1)*angle(A));
