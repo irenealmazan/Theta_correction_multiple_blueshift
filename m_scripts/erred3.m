@@ -23,7 +23,7 @@ if plotResults
     else
         hchi = findobj('Name', 'chi');
     end
-    
+    h=waitbarpos(0, 'error reduction phase iterations');
     
     figure(hchi);clf;
 end
@@ -38,7 +38,6 @@ if ~isempty(prevobj) A = fftn(prevobj.object); end
 %imagesc(fftshift(log(abs((A)))));pause%
 %imagesc(fftshift(angle((A))));pause
 
-h=waitbarpos(0, 'error reduction phase iterations');
 
 chi =[];
 chilen = 0;
