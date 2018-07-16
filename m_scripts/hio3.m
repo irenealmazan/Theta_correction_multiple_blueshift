@@ -91,8 +91,9 @@ for i=1:num
     end
 end
 
-close(h);
-
+if plotResults
+    close(h);
+end
 %imagesc(angle(A));
 
 retrphase = abs(dp).*exp(sqrt(-1)*angle(A));
