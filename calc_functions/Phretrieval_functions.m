@@ -271,7 +271,7 @@ classdef Phretrieval_functions
                 finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj_shift,angles_list,probe,ki,kf,X,Y,Z);
                 err = DiffractionPatterns.calculate_error_realspace(NW,finalobj_2DFT);
                 err_ERHIO = [err_ERHIO err];
-                display(['ER iter ' num2str(numel(err_ERHIO)) ' error: ' num2str(err) ' \n'])
+                display(['ER iter ' num2str(numel(err_ERHIO)) ' error: ' num2str(err) ' chi value: ' num2str(newobj.chi(end)) ' \n'])
             end
             
             
@@ -286,7 +286,7 @@ classdef Phretrieval_functions
                 finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj,delta_thscanvals,probe,ki_o,kf_o,X,Y,Z);
                 err = DiffractionPatterns.calculate_error_realspace(NW,finalobj_2DFT)
                 err_ERHIO = [err_ERHIO err];
-                display(['HIO iter ' num2str(numel(err_ERHIO)) ' error: ' num2str(err) ' \n'])
+                display(['HIO iter ' num2str(numel(err_ERHIO)) ' error: ' num2str(err) ' chi value: ' num2str(newobj.chi(end)) ' \n'])
             end
             
             
