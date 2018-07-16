@@ -1,4 +1,4 @@
-function [retrphase newobj] = hio3(dp, support, num, savenum, prevobj, beta)
+function [retrphase newobj] = hio3(dp, support, num, savenum, prevobj, beta,plotResults)
 
 dp = abs(dp);
 
@@ -12,23 +12,26 @@ if ~isempty(prevobj) A = fftn(prevobj.object); end
 %imagesc(fftshift(log(abs((A)))));pause%
 %imagesc(fftshift(angle((A))));pause
 
-h=waitbarpos(0, 'hio phase iterations');
-
-if isempty( findobj('Name', 'phasing'))
-    hfig = figure;
-    set(gcf, 'Name','phasing');
-else
-    hfig = findobj('Name', 'phasing');
+if plotResults
+    h=waitbarpos(0, 'hio phase iterations');
+    
+    if isempty( findobj('Name', 'phasing'))
+        hfig = figure;
+        set(gcf, 'Name','phasing');
+    else
+        hfig = findobj('Name', 'phasing');
+    end
+    
+    if isempty( findobj('Name', 'chi'))
+        hchi = figure;
+        set(gcf, 'Name','chi');
+    else
+        hchi = findobj('Name', 'chi');
+    end
+    
+    figure(hchi);clf;
+    
 end
-
-if isempty( findobj('Name', 'chi'))
-    hchi = figure;
-    set(gcf, 'Name','chi');
-else
-    hchi = findobj('Name', 'chi');
-end
-
-figure(hchi);clf;
 
 ssqexpamp = sum(sum(sum(abs(dp))));
 
@@ -76,14 +79,16 @@ for i=1:num
     A = fftn(D);
 
     %find a chi fit.
-    chi(chilen+i,1) = sum(sum(sum( (abs(A)-abs(dp)).^2))) / ssqexpamp ;
-    figure(hchi);
-    plot([1:length(chi)], log10(chi));
-    title(['chi fit is ' num2str(chi(i,1))]);
-    ylabel('log chi');
+    chi(chilen+i,1) = sum(sum(sum( (abs(A)-abs(dp)).^2))) / numel(dp) ;%sum(sum(sum( (abs(A)-abs(dp)).^2))) / ssqexpamp ;
     
-    waitbar(i/num,h);
-    
+    if plotResults
+        figure(hchi);
+        plot([1:length(chi)], log10(chi));
+        title(['chi fit is ' num2str(chi(i,1))]);
+        ylabel('log chi');
+        
+        waitbar(i/num,h);
+    end
 end
 
 close(h);
