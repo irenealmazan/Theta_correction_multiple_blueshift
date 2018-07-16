@@ -249,8 +249,8 @@ classdef DiffractionPatterns
             
             % multiply by phase ramp FT of object:
             shift_directspace = [X(r,c,p) - X(65,65,65) Y(r,c,p) - Y(65,65,65) Z(r,c,p) - Z(65,65,65)];
-            fft_rho_final_shift = fft_rho_final.*exp(-1i*(shift_directspace(1)*X_recip + shift_directspace(2)*Y_recip + shift_directspace(3)*Z_recip));
-            
+            fft_rho_final_shift = fft_rho_final.*exp(-1i*(shift_directspace(1)*X_recip + shift_directspace(2)*Y_recip + 0.5*shift_directspace(3)*Z_recip));
+
             rho_final_shift = ifftn(fft_rho_final_shift);
             
         end
