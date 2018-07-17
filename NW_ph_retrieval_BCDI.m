@@ -76,9 +76,7 @@ if flagContinue == 0
   
    
      [err_ini] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
-     rho_conj = ifftn(conj(fftn(rho)));
-     [rho_shift] = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
-     err_direct = DiffractionPatterns.calculate_error_realspace(abs(NW*sqrt(mncntrate/mn)),abs(rho_shift));
+     [err_direct] = Phretrieval_functions.decide_flip(NW*sqrt(mncrate/mn),rho,angles_list,probe,ki,kf,d2_bragg,X,Y,Z);
      
     % initial value of the gradient in rho and theta, assumed to be zero
     norm_grad_rho = zeros(Niter_rho,1);
@@ -135,11 +133,8 @@ for nrho = nrho_vect
         [rho,beta_rho(nrho),norm_grad_rho(nrho),gPIEiter,direction_rho] = Phretrieval_functions.rho_update(probe, rho,gPIEiter,direction_rho,angles_list,support_iter, nrho, data_exp,depth,errlist(end),freq_restart,tau_backtrack_rho,beta_ini_rho,counter_max_rho,ki_o,kf_o,X,Y,Z);
         
         [err] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
-        
-        rho_conj = ifftn(conj(fftn(rho)));
-        [rho_shift] = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
-        [err_direct] = DiffractionPatterns.calculate_error_realspace(abs(NW*sqrt(mncntrate/mn)),abs(rho_shift));
-        
+        [err_direct] = Phretrieval_functions.decide_flip(NW*sqrt(mncrate/mn),rho,angles_list,probe,ki,kf,d2_bragg,X,Y,Z);
+
         errlist = [errlist err];
         errlist_direct = [errlist_direct err_direct];
         
@@ -174,10 +169,8 @@ for nrho = nrho_vect
         end
 
         [err] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
-        
-        rho_conj = ifftn(conj(fftn(rho)));
-        [rho_shift] = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
-        [err_direct] = DiffractionPatterns.calculate_error_realspace(abs(NW*sqrt(mncntrate/mn)),abs(rho_shift));
+        [err_direct] = Phretrieval_functions.decide_flip(NW*sqrt(mncrate/mn),rho,angles_list,probe,ki,kf,d2_bragg,X,Y,Z);
+
         
         errlist = [errlist err];
         errlist_direct = [errlist_direct err_direct];

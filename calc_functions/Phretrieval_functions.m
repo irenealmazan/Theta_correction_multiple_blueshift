@@ -261,37 +261,69 @@ classdef Phretrieval_functions
             
         end
         
-        function  [retrphase,newobj,err_ERHIO] = do_ER(err_ERHIO,dp,support,newobj,er_iter,NW,angles_list,ki,kf,probe,d2_bragg,X,Y,Z,plotResults)
+        function  [retrphase,newobj,err_ERHIO] = do_ERHIO(err_ERHIO,dp,support,newobj,er_iter,NW,angles_list,ki,kf,probe,d2_bragg,X,Y,Z,plotResults,flagER)
+            
             
             
             for jj = 1:er_iter
-                [retrphase newobj] = erred3( sqrt(dp),support,1, 10000, newobj,plotResults);
-                finalobj = (ifftn(conj(newobj.dp)));
-                [finalobj_shift] = DiffractionPatterns.shift_object(NW,finalobj,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);
-                finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj_shift,angles_list,probe,ki,kf,X,Y,Z);
-                err = DiffractionPatterns.calculate_error_realspace(abs(NW),abs(finalobj_2DFT));
+                if flagER
+                    [retrphase newobj] = erred3( sqrt(dp),support,1, 10000, newobj,plotResults);
+                    string_iter = ['ER_iter'];
+                else
+                    [retrphase newobj] = hio3( sqrt(dp),support,1, 10000, newobj,0.7,plotResults);
+                    string_iter = ['HIO_iter'];
+                end
+                
+                finalobj_3DFT = (ifftn(newobj.dp));
+                
+                finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj_3DFT,angles_list,probe,ki,kf,X,Y,Z);
+                
+                [err] = Phretrieval_functions.decide_flip(NW,finalobj_2DFT,angles_list,probe,ki,kf,d2_bragg,X,Y,Z);
                 err_ERHIO = [err_ERHIO err];
-                display(['ER iter ' num2str(numel(err_ERHIO)) ' error: ' num2str(err) ' chi value: ' num2str(newobj.chi(end)) ' \n'])
+                
+                display([string_iter num2str(numel(err_ERHIO)) ' error: ' num2str(err) ' chi value: ' num2str(newobj.chi(end)) ' \n'])
             end
             
             
         end
         
-         function  [retrphase,newobj,err_ERHIO] = do_HIO(err_ERHIO,dp,support,newobj,er_iter,NW,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults)
+       
+        
+        function [err] = decide_flip(NW,rho,angles_list,ki,kf,d2_bragg,X,Y,Z)
+            % this function checks wether the retrieved object is flipped
+            % with respect to the original one.
             
+            % conjugate the diffraction pattern to flip the object and then
+            % shift
+            finalobj = (ifftn(conj(fftn(rho))));
+            [finalobj_shift] = DiffractionPatterns.shift_object(NW,finalobj,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);       
+            err_1 = DiffractionPatterns.calculate_error_realspace(abs(NW),abs(finalobj_shift));
             
-            for jj = 1:er_iter
-                [retrphase newobj] = hio3( sqrt(dp),support,1, 10000, newobj,0.7,plotResults);
-                finalobj = (ifftn(conj(newobj.dp)));
-                finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj,delta_thscanvals,probe,ki_o,kf_o,X,Y,Z);
-                err = DiffractionPatterns.calculate_error_realspace(abs(NW),abs(finalobj_2DFT));
-                err_ERHIO = [err_ERHIO err];
-                display(['HIO iter ' num2str(numel(err_ERHIO)) ' error: ' num2str(err) ' chi value: ' num2str(newobj.chi(end)) ' \n'])
+            % only shift the object
+            finalobj_2 = ifftn(fftn(rho));
+            [finalobj_2_shift] = DiffractionPatterns.shift_object(NW,finalobj_2,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);            
+            err_2 = DiffractionPatterns.calculate_error_realspace(abs(NW),abs(finalobj_2_shift));
+            
+            if err_1<err_2
+                finalobj =finalobj_shift;
+                
+            else
+                finalobj =  finalobj_2_shift;
+             
             end
+            % phase of the final object at the center pixel:
+            Nx_c = round(size(finalobj,1)/2);
+            Ny_c = round(size(finalobj,2)/2);
+            Nz_c = round(size(finalobj,1)/2);
+            phase_offset_finalobj = angle(finalobj(Nx_c,Ny_c,Nz_c));
             
+             % phase of the real object at the center pixel:
+            phase_offset_NW = angle(NW(Nx_c,Ny_c,Nz_c));
+            
+            
+            err = DiffractionPatterns.calculate_error_realspace(NW*exp(-1i*phase_offset_NW),finalobj*exp(-1i*phase_offset_finalobj));
             
         end
-        
     end
         
    

@@ -9,58 +9,69 @@ original_object = NW*sqrt(mncntrate/mn);
 err_ERHIO = [];
 
 er_iter = 1;
-
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,sup_ini,[],er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 1;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,sup_ini,[],er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 
 
 er_iter = 150;
-
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,sup_ini,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 1;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,sup_ini,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 mod_object = abs(newobj.object);
 support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,[1 1 1]*1e6,X,Y,Z);
 
 er_iter = 120;
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 1;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 
 mod_object = abs(newobj.object);
 support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,[1 1 1]*1e6,X,Y,Z);
 
 er_iter = 60;
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 1;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 
 hio_iter = 100;
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_HIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 0;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,hio_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 er_iter = 120;
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 1;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 mod_object = abs(newobj.object);
 support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,[1 1 1]*1e6,X,Y,Z);
 
 er_iter = 60;
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 1;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 hio_iter = 100;
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_HIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 0;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,hio_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 er_iter = 120;
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 1;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 mod_object = abs(newobj.object);
 support_new = Phretrieval_functions.shrink_wrap_support(mod_object,0.1,[1 1 1]*1e6,X,Y,Z);
 
 er_iter = 60;
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 1;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 hio_iter = 50;
-[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_HIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 0;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,hio_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 er_iter = 180;
 [retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults);
+flagER = 1;
+[retrphase,newobj,err_ERHIO] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER);
 
 
 
