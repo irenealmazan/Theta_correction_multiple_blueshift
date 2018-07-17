@@ -13,7 +13,7 @@ for jjj = 1:numel(jitterlevel)
          display('NO NOISE')
      end
      
-    savefolder = ['jitter_' num2str(jitterlevel) '_noiselevel_0'];
+    savefolder = ['jitter_' num2str(jitterlevel(jjj)) '_noiselevel_0'];
     mkdir(savefolder);     
     
     NW_masterscript_BCDI;
