@@ -37,7 +37,10 @@ rho_conj = ifftn(conj(fftn(rho))); % correct for the flip
 
 rho_ini_conj = ifftn(conj(fftn(rho_ini))); % correct for the flip
 
-rho_shift = DiffractionPatterns.shift_object(NW,rho_conj,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+rho_shift = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_conj,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+rho_ini_shift = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_ini_conj ,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+rho_3DFT_shift = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),ifftn(conj(fftn(rho_3DFT))) ,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
 
-err = DiffractionPatterns.calculate_error_realspace(NW,rho_shift)
-err_ERHIO = FiguresForPaper.calculate_error_realspace(NW*sqrt(mncntrate/mn),rho_conj,[65],'1',16,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+err = DiffractionPatterns.calculate_error_realspace(abs(NW*sqrt(mncntrate/mn)),abs(rho_shift))
+err_ini = DiffractionPatterns.calculate_error_realspace(abs(NW*sqrt(mncntrate/mn)),abs(rho_ini_shift))
+err_3DFT = DiffractionPatterns.calculate_error_realspace(NW*sqrt(mncntrate/mn),abs(rho_3DFT_shift))

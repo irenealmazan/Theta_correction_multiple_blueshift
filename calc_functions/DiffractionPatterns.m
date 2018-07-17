@@ -227,10 +227,14 @@ classdef DiffractionPatterns
             % pixel size on the z direction of the reciprocal space:
             qz_pixel_size = abs((dqshift(1,3) - dqshift(end,3))/size(dqshift,1));
             
-            
+%             
+%              [X_recip,Y_recip,Z_recip] = meshgrid([-Npix/2:Npix/2-1].*2*pi/(Npix*d2_bragg), ...
+%                 [-Npix/2:Npix/2-1].*2*pi/(Npix*d2_bragg),...
+%                 [-depth/2:depth/2-1].*2*qz_pixel_size); 
+%             
              [X_recip,Y_recip,Z_recip] = meshgrid([-Npix/2:Npix/2-1].*2*pi/(Npix*d2_bragg), ...
                 [-Npix/2:Npix/2-1].*2*pi/(Npix*d2_bragg),...
-                [-depth/2:depth/2-1].*2*qz_pixel_size); 
+                [-depth/2:depth/2-1].*qz_pixel_size); 
         end
         
         function [autocorr,rho_final_shift] = calc_autocorr_shift_object(rho_1,rho_2,X,Y,Z,X_recip,Y_recip,Z_recip)
@@ -250,7 +254,7 @@ classdef DiffractionPatterns
             % multiply by phase ramp FT of object:
             shift_directspace = [X(r,c,p) - X(65,65,65) Y(r,c,p) - Y(65,65,65) Z(r,c,p) - Z(65,65,65)];            
             %rho_final_shift = rho_2 + shift_directspace(1);
-            fft_rho_final_shift = fft_rho_final.*exp(-1i*(shift_directspace(1)*X_recip + shift_directspace(2)*Y_recip + 0.5*shift_directspace(3)*Z_recip));
+            fft_rho_final_shift = fft_rho_final.*exp(-1i*(shift_directspace(1)*X_recip + shift_directspace(2)*Y_recip + shift_directspace(3)*Z_recip));
 
             % use pixels:
             shift_pixels = [r-65 c-65 p-65];
