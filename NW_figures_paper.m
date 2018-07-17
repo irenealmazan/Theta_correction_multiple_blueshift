@@ -44,3 +44,6 @@ rho_3DFT_shift = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),ifftn(co
 err = DiffractionPatterns.calculate_error_realspace(abs(NW*sqrt(mncntrate/mn)),abs(rho_shift))
 err_ini = DiffractionPatterns.calculate_error_realspace(abs(NW*sqrt(mncntrate/mn)),abs(rho_ini_shift))
 err_3DFT = DiffractionPatterns.calculate_error_realspace(NW*sqrt(mncntrate/mn),abs(rho_3DFT_shift))
+
+
+DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn),rho_shift,'','',[40 90 40 90],[65],'3',16);

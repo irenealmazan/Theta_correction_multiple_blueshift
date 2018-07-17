@@ -458,29 +458,34 @@ classdef DisplayResults
                     imagesc(abs(NW1_to_plot));
                     axis image;
                     colorbar;
-                    title(['Intensity' titleNW1 ' at  ii = ' num2str(ii) ' , along dimension ' dimension]);
+                    title([titleNW1]);
                     set(gca,'FontSize',30);
+                    axis off;
                     
                     subplot(222);
                     imagesc(angle(NW1_to_plot));
                     axis image;
                     colorbar;
-                    title(['Phase' titleNW1 ' at  ii = ' num2str(ii) ' , along dimension ' dimension]);
+                    title([titleNW1 ]);
                     set(gca,'FontSize',30);
-                    
+                     axis off;
+                     
                     subplot(223);
                     imagesc(abs(NW2_to_plot));
                     axis image;
                     colorbar;
-                    title(['Intensity' titleNW2 ]);
+                    title([titleNW2 ]);
                     set(gca,'FontSize',30);
+                    axis off;
                     
                     subplot(224);
                     imagesc(angle(NW2_to_plot));
                     axis image;
                     colorbar;
-                    title(['Phase' titleNW2 ]);
+                    title([titleNW2 ]);
                     set(gca,'FontSize',30);
+                    axis off;
+                    
                     pause(.5);
                     
                     
