@@ -78,7 +78,7 @@ if flagContinue == 0
      [err_ini] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
      rho_conj = ifftn(conj(fftn(rho)));
      [rho_shift] = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
-     err_direct = DiffractionPatterns.calculate_error_realspace(NW*sqrt(mncntrate/mn),rho_shift);
+     err_direct = DiffractionPatterns.calculate_error_realspace(abs(NW*sqrt(mncntrate/mn)),abs(rho_shift));
      
     % initial value of the gradient in rho and theta, assumed to be zero
     norm_grad_rho = zeros(Niter_rho,1);
@@ -138,7 +138,7 @@ for nrho = nrho_vect
         
         rho_conj = ifftn(conj(fftn(rho)));
         [rho_shift] = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
-        [err_direct] = DiffractionPatterns.calculate_error_realspace(NW*sqrt(mncntrate/mn),rho_shift);
+        [err_direct] = DiffractionPatterns.calculate_error_realspace(abs(NW*sqrt(mncntrate/mn)),abs(rho_shift));
         
         errlist = [errlist err];
         errlist_direct = [errlist_direct err_direct];
@@ -177,7 +177,7 @@ for nrho = nrho_vect
         
         rho_conj = ifftn(conj(fftn(rho)));
         [rho_shift] = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
-        [err_direct] = DiffractionPatterns.calculate_error_realspace(NW*sqrt(mncntrate/mn),rho_shift);
+        [err_direct] = DiffractionPatterns.calculate_error_realspace(abs(NW*sqrt(mncntrate/mn)),abs(rho_shift));
         
         errlist = [errlist err];
         errlist_direct = [errlist_direct err_direct];
