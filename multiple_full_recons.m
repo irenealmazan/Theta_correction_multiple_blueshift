@@ -1,4 +1,4 @@
-jitterlevel = [0 5 10 20 40];
+jitterlevel = [0 5]% 10 20 40];
 
 for jjj = 1:numel(jitterlevel)
     
