@@ -261,7 +261,7 @@ classdef Phretrieval_functions
             
         end
         
-        function  [retrphase,newobj,err_ERHIO] = do_ERHIO(err_ERHIO,dp,support,newobj,er_iter,NW,angles_list,ki,kf,probe,d2_bragg,X,Y,Z,plotResults,flagER)
+        function  [retrphase,newobj,err_ERHIO,struct_rho_iter,counter] = do_ERHIO(err_ERHIO,dp,support,newobj,er_iter,NW,angles_list,ki,kf,probe,d2_bragg,X,Y,Z,plotResults,flagER,struct_rho_iter,counter)
             
             
             
@@ -277,11 +277,19 @@ classdef Phretrieval_functions
                 finalobj_3DFT = (ifftn(newobj.dp));
                 
                 finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj_3DFT,angles_list,probe,ki,kf,X,Y,Z);
+                support_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support,angles_list,probe,ki,kf,X,Y,Z);
                 
-                [err] = Phretrieval_functions.decide_flip(NW,finalobj_2DFT,angles_list,ki,kf,d2_bragg,X,Y,Z);
+                [err,index_NW,val_NW,index_rho,val_rho] = Phretrieval_functions.decide_flip(NW,finalobj_2DFT,support_2DFT,angles_list,ki,kf,d2_bragg,X,Y,Z);
                 err_ERHIO = [err_ERHIO err];
                 
+                struct_rho_iter(counter).index_NW = index_NW;
+                struct_rho_iter(counter).val_NW = val_NW;
+                struct_rho_iter(counter).index_rho = index_rho;
+                struct_rho_iter(counter).val_rho = val_rho;
+                
                 display([string_iter num2str(numel(err_ERHIO)) ' error: ' num2str(err) ' chi value: ' num2str(newobj.chi(end)) ' \n'])
+                
+                counter = counter + 1;
             end
             
             
@@ -289,7 +297,7 @@ classdef Phretrieval_functions
         
        
         
-        function [err] = decide_flip(NW,rho,angles_list,ki,kf,d2_bragg,X,Y,Z)
+        function [err,index_NW,val_NW,index_rho,val_rho] = decide_flip(NW,rho,support,angles_list,ki,kf,d2_bragg,X,Y,Z)
             % this function checks wether the retrieved object is flipped
             % with respect to the original one.
             
@@ -306,11 +314,13 @@ classdef Phretrieval_functions
             
             if err_1<err_2
                 finalobj =finalobj_shift;
-                
+                support_final = (ifftn(conj(fftn(support))));
             else
                 finalobj =  finalobj_2_shift;
-             
+                support_final = support;
             end
+            
+            support_shift = DiffractionPatterns.shift_object(NW,support_final,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z); 
             % phase of the final object at the center pixel:
             Nx_c = round(size(finalobj,1)/2);
             Ny_c = round(size(finalobj,2)/2);
@@ -322,6 +332,12 @@ classdef Phretrieval_functions
             
             
             err = DiffractionPatterns.calculate_error_realspace(NW*exp(-1i*phase_offset_NW),finalobj*exp(-1i*phase_offset_finalobj));
+            
+            % save non-zero values           
+            [index_rho] = find(abs(finalobj(:).*support_shift(:))>0);
+            val_rho = finalobj(index_rho);
+            index_NW = index_rho;
+            val_NW = NW(index_NW);
             
         end
     end
