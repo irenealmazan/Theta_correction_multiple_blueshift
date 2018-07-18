@@ -74,7 +74,6 @@ flagER = 0;
 [retrphase,newobj,err_ERHIO,struct_rho_iter,counter] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,hio_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER,struct_rho_iter,counter);
 
 er_iter = 180;
-[retrphase,newobj,err_ERHIO,struct_rho_iter,counter] = Phretrieval_functions.do_ER(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,struct_rho_iter,counter);
 flagER = 1;
 [retrphase,newobj,err_ERHIO,struct_rho_iter,counter] = Phretrieval_functions.do_ERHIO(err_ERHIO,dp,support_new,newobj,er_iter,original_object,delta_thscanvals,ki_o,kf_o,probe,d2_bragg,X,Y,Z,plotResults,flagER,struct_rho_iter,counter);
 
