@@ -297,6 +297,10 @@ classdef Phretrieval_functions
        
         
         function [err,index_rho,val_rho] = decide_flip(NW,rho,support,angles_list,ki,kf,d2_bragg,X,Y,Z)
+=======
+               
+        function [err,index_NW,val_NW,index_rho,val_rho] = decide_flip(NW,rho,support,angles_list,ki,kf,d2_bragg,X,Y,Z)
+>>>>>>> e86c20a2ad309f8c58fbdcdf6889a51c977d7dfb
             % this function checks wether the retrieved object is flipped
             % with respect to the original one.
             
@@ -305,7 +309,7 @@ classdef Phretrieval_functions
             finalobj = (ifftn(conj(fftn(rho))));
             [finalobj_shift,shift_1_directspace] = DiffractionPatterns.shift_object(NW,finalobj,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);       
             err_1 = DiffractionPatterns.calculate_error_realspace(abs(NW),abs(finalobj_shift));
-            
+
             % only shift the object
             finalobj_2 = ifftn(fftn(rho));
             [finalobj_2_shift,shift_2_directspace] = DiffractionPatterns.shift_object(NW,finalobj_2,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);            
@@ -321,6 +325,7 @@ classdef Phretrieval_functions
                 shift_final = shift_2_directspace;
             end
             
+<<<<<<< HEAD
             
             support_shift = DiffractionPatterns.shift_object_known_shift(support_final,shift_final,angles_list,ki,kf,kf-ki,X,d2_bragg);
 
@@ -338,11 +343,13 @@ classdef Phretrieval_functions
             phase_offset_NW = angle(NW(Nx_c,Ny_c,Nz_c));
             
             
-            err = DiffractionPatterns.calculate_error_realspace(NW*exp(-1i*phase_offset_NW),finalobj*exp(-1i*phase_offset_finalobj));
             
             % save non-zero values           
             [index_rho] = find(abs(finalobj(:).*support_shift(:))>1e-16);
+<<<<<<< HEAD
             val_rho = finalobj(index_rho);            
+=======
+            val_rho = finalobj(index_rho);
             index_NW = index_rho;
             val_NW = NW(index_NW);
 >>>>>>> e86c20a2ad309f8c58fbdcdf6889a51c977d7dfb
