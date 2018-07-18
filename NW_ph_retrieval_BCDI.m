@@ -134,11 +134,7 @@ for nrho = nrho_vect
         
         [err] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
         [err_direct] = Phretrieval_functions.decide_flip(NW*sqrt(mncntrate/mn),rho,support_iter,angles_list,ki_o,kf_o,d2_bragg,X,Y,Z);
-<<<<<<< HEAD
-
-=======
         
->>>>>>> a2423a2d06d6c5ce9b41a942c6e4a4c1a2d241ab
         errlist = [errlist err];
         errlist_direct = [errlist_direct err_direct];
         
@@ -203,8 +199,3 @@ for nrho = nrho_vect
     %}
 
 end
-
-   
-
-
-
