@@ -237,7 +237,6 @@ classdef Phretrieval_functions
             %{
             for jj= dthsearchind(2:end-1)
                 grad_manual = test_grad_theta_manually(jj,thscan,fitQerr,data_exp(ii),bmtemp,rho,grad_final_theta(ii).grad(jj));
-
             end
         
             %}
@@ -279,10 +278,11 @@ classdef Phretrieval_functions
                 finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj_3DFT,angles_list,probe,ki,kf,X,Y,Z);
                 support_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support,angles_list,probe,ki,kf,X,Y,Z);
                 
-                [err,index_rho,val_rho] = Phretrieval_functions.decide_flip(NW,finalobj_2DFT,support_2DFT,angles_list,ki,kf,d2_bragg,X,Y,Z);
+                [err,index_NW,val_NW,index_rho,val_rho] = Phretrieval_functions.decide_flip(NW,finalobj_2DFT,support_2DFT,angles_list,ki,kf,d2_bragg,X,Y,Z);
                 err_ERHIO = [err_ERHIO err];
                 
-               
+                struct_rho_iter(counter).index_NW = index_NW;
+                struct_rho_iter(counter).val_NW = val_NW;
                 struct_rho_iter(counter).index_rho = index_rho;
                 struct_rho_iter(counter).val_rho = val_rho;
                 
@@ -293,46 +293,32 @@ classdef Phretrieval_functions
             
             
         end
-        
-       
-        
-        function [err,index_rho,val_rho] = decide_flip(NW,rho,support,angles_list,ki,kf,d2_bragg,X,Y,Z)
-=======
                
         function [err,index_NW,val_NW,index_rho,val_rho] = decide_flip(NW,rho,support,angles_list,ki,kf,d2_bragg,X,Y,Z)
->>>>>>> e86c20a2ad309f8c58fbdcdf6889a51c977d7dfb
             % this function checks wether the retrieved object is flipped
             % with respect to the original one.
             
             % conjugate the diffraction pattern to flip the object and then
             % shift
             finalobj = (ifftn(conj(fftn(rho))));
-            [finalobj_shift,shift_1_directspace] = DiffractionPatterns.shift_object(NW,finalobj,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);       
+            [finalobj_shift] = DiffractionPatterns.shift_object(NW,finalobj,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);       
             err_1 = DiffractionPatterns.calculate_error_realspace(abs(NW),abs(finalobj_shift));
 
             % only shift the object
             finalobj_2 = ifftn(fftn(rho));
-            [finalobj_2_shift,shift_2_directspace] = DiffractionPatterns.shift_object(NW,finalobj_2,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);            
+            [finalobj_2_shift] = DiffractionPatterns.shift_object(NW,finalobj_2,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);            
             err_2 = DiffractionPatterns.calculate_error_realspace(abs(NW),abs(finalobj_2_shift));
             
             if err_1<err_2
                 finalobj =finalobj_shift;
                 support_final = (ifftn(conj(fftn(support))));
-                shift_final = shift_1_directspace;
             else
                 finalobj =  finalobj_2_shift;
                 support_final = support;
-                shift_final = shift_2_directspace;
             end
             
-<<<<<<< HEAD
-            
-            support_shift = DiffractionPatterns.shift_object_known_shift(support_final,shift_final,angles_list,ki,kf,kf-ki,X,d2_bragg);
-
-=======
             support_shift = DiffractionPatterns.shift_object(NW,support_final,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z); 
             support_shift_final = abs(support_shift>0.1*max(abs(support_shift(:)))) ;
->>>>>>> e86c20a2ad309f8c58fbdcdf6889a51c977d7dfb
             % phase of the final object at the center pixel:
             Nx_c = round(size(finalobj,1)/2);
             Ny_c = round(size(finalobj,2)/2);
@@ -343,16 +329,13 @@ classdef Phretrieval_functions
             phase_offset_NW = angle(NW(Nx_c,Ny_c,Nz_c));
             
             
+            err = DiffractionPatterns.calculate_error_realspace(NW*exp(-1i*phase_offset_NW),finalobj*exp(-1i*phase_offset_finalobj).*support_shift_final);
             
             % save non-zero values           
             [index_rho] = find(abs(finalobj(:).*support_shift(:))>1e-16);
-<<<<<<< HEAD
-            val_rho = finalobj(index_rho);            
-=======
             val_rho = finalobj(index_rho);
             index_NW = index_rho;
             val_NW = NW(index_NW);
->>>>>>> e86c20a2ad309f8c58fbdcdf6889a51c977d7dfb
             
         end
     end
