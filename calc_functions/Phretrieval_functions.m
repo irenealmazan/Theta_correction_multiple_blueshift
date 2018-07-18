@@ -329,7 +329,8 @@ classdef Phretrieval_functions
             phase_offset_NW = angle(NW(Nx_c,Ny_c,Nz_c));
             
             
-            err = DiffractionPatterns.calculate_error_realspace(NW*exp(-1i*phase_offset_NW),finalobj*exp(-1i*phase_offset_finalobj).*support_shift_final);
+            %err = DiffractionPatterns.calculate_error_realspace(NW*exp(-1i*phase_offset_NW),finalobj*exp(-1i*phase_offset_finalobj).*support_shift_final);
+            err = DiffractionPatterns.calculate_error_realspace(NW*exp(-1i*phase_offset_NW),finalobj*exp(-1i*phase_offset_finalobj));
             
             % save non-zero values           
             [index_rho] = find(abs(finalobj(:).*support_shift(:))>1e-16);
