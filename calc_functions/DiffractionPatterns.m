@@ -237,7 +237,7 @@ classdef DiffractionPatterns
                 [-depth/2:depth/2-1].*qz_pixel_size); 
         end
         
-        function [autocorr,rho_final_shift] = calc_autocorr_shift_object(rho_1,rho_2,X,Y,Z,X_recip,Y_recip,Z_recip)
+        function [autocorr,rho_final_shift,shift_directspace] = calc_autocorr_shift_object(rho_1,rho_2,X,Y,Z,X_recip,Y_recip,Z_recip)
             
             fft_rho_original = fftn(rho_1);
             fft_rho_final = fftn(rho_2);
@@ -264,7 +264,7 @@ classdef DiffractionPatterns
             
         end
         
-        function [rho_final_shift] = shift_object(rho_original,rho_final,angles_list,ki,kf,qbragg,d2_bragg,X,Y,Z)
+        function [rho_final_shift,shift_directspace] = shift_object(rho_original,rho_final,angles_list,ki,kf,qbragg,d2_bragg,X,Y,Z)
            
              Npix = size(X,1);
             depth = size(X,3);
@@ -274,8 +274,25 @@ classdef DiffractionPatterns
             
             [X_recip,Y_recip,Z_recip, qz_pixel_size] = DiffractionPatterns.calc_reciprocal_space(dqshift,Npix,depth,d2_bragg);
            
-            [autocorr,rho_final_shift] = DiffractionPatterns.calc_autocorr_shift_object(rho_original,rho_final,X,Y,Z,X_recip,Y_recip,Z_recip);
+            [autocorr,rho_final_shift,shift_directspace] = DiffractionPatterns.calc_autocorr_shift_object(rho_original,rho_final,X,Y,Z,X_recip,Y_recip,Z_recip);
            
+            
+        end
+        
+        function [object_final_shift] = shift_object_known_shift(object,shift,angles_list,ki,kf,qbragg,X,d2_bragg)
+            
+            Npix = size(X,1);
+            depth = size(X,3);
+            
+            [dqshift] = DiffractionPatterns.calc_dqshift_for_given_th(angles_list,ki,kf,qbragg);
+            
+            [X_recip,Y_recip,Z_recip, qz_pixel_size] = DiffractionPatterns.calc_reciprocal_space(dqshift,Npix,depth,d2_bragg);
+            
+            fft_final = fftn(object);
+            fft_shift = fft_final.*exp(-1i*(shift(1)*X_recip + shift(2)*Y_recip + shift(3)*Z_recip));
+            
+            
+            object_final_shift = ifftn(fft_shift);
             
         end
         

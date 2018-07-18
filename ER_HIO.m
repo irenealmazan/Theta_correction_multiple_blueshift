@@ -5,8 +5,6 @@
 
 original_object = NW*sqrt(mncntrate/mn);
 counter = 1;
-struct_rho_iter(counter).index_NW = [];
-struct_rho_iter(counter).val_NW = [];
 struct_rho_iter(counter).index_rho = [];
 struct_rho_iter(counter).val_rho = [];
 

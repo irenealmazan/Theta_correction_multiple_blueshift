@@ -279,11 +279,10 @@ classdef Phretrieval_functions
                 finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj_3DFT,angles_list,probe,ki,kf,X,Y,Z);
                 support_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support,angles_list,probe,ki,kf,X,Y,Z);
                 
-                [err,index_NW,val_NW,index_rho,val_rho] = Phretrieval_functions.decide_flip(NW,finalobj_2DFT,support_2DFT,angles_list,ki,kf,d2_bragg,X,Y,Z);
+                [err,index_rho,val_rho] = Phretrieval_functions.decide_flip(NW,finalobj_2DFT,support_2DFT,angles_list,ki,kf,d2_bragg,X,Y,Z);
                 err_ERHIO = [err_ERHIO err];
                 
-                struct_rho_iter(counter).index_NW = index_NW;
-                struct_rho_iter(counter).val_NW = val_NW;
+               
                 struct_rho_iter(counter).index_rho = index_rho;
                 struct_rho_iter(counter).val_rho = val_rho;
                 
@@ -297,30 +296,34 @@ classdef Phretrieval_functions
         
        
         
-        function [err,index_NW,val_NW,index_rho,val_rho] = decide_flip(NW,rho,support,angles_list,ki,kf,d2_bragg,X,Y,Z)
+        function [err,index_rho,val_rho] = decide_flip(NW,rho,support,angles_list,ki,kf,d2_bragg,X,Y,Z)
             % this function checks wether the retrieved object is flipped
             % with respect to the original one.
             
             % conjugate the diffraction pattern to flip the object and then
             % shift
             finalobj = (ifftn(conj(fftn(rho))));
-            [finalobj_shift] = DiffractionPatterns.shift_object(NW,finalobj,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);       
+            [finalobj_shift,shift_1_directspace] = DiffractionPatterns.shift_object(NW,finalobj,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);       
             err_1 = DiffractionPatterns.calculate_error_realspace(abs(NW),abs(finalobj_shift));
             
             % only shift the object
             finalobj_2 = ifftn(fftn(rho));
-            [finalobj_2_shift] = DiffractionPatterns.shift_object(NW,finalobj_2,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);            
+            [finalobj_2_shift,shift_2_directspace] = DiffractionPatterns.shift_object(NW,finalobj_2,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);            
             err_2 = DiffractionPatterns.calculate_error_realspace(abs(NW),abs(finalobj_2_shift));
             
             if err_1<err_2
                 finalobj =finalobj_shift;
                 support_final = (ifftn(conj(fftn(support))));
+                shift_final = shift_1_directspace;
             else
                 finalobj =  finalobj_2_shift;
                 support_final = support;
+                shift_final = shift_2_directspace;
             end
             
-            support_shift = DiffractionPatterns.shift_object(NW,support_final,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z); 
+            
+            support_shift = DiffractionPatterns.shift_object_known_shift(support_final,shift_final,angles_list,ki,kf,kf-ki,X,d2_bragg);
+
             % phase of the final object at the center pixel:
             Nx_c = round(size(finalobj,1)/2);
             Ny_c = round(size(finalobj,2)/2);
@@ -334,10 +337,8 @@ classdef Phretrieval_functions
             err = DiffractionPatterns.calculate_error_realspace(NW*exp(-1i*phase_offset_NW),finalobj*exp(-1i*phase_offset_finalobj));
             
             % save non-zero values           
-            [index_rho] = find(abs(finalobj(:).*support_shift(:))>0);
-            val_rho = finalobj(index_rho);
-            index_NW = index_rho;
-            val_NW = NW(index_NW);
+            [index_rho] = find(abs(finalobj(:).*support_shift(:))>1e-16);
+            val_rho = finalobj(index_rho);            
             
         end
     end
