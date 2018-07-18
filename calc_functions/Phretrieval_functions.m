@@ -324,6 +324,10 @@ classdef Phretrieval_functions
             
             support_shift = DiffractionPatterns.shift_object_known_shift(support_final,shift_final,angles_list,ki,kf,kf-ki,X,d2_bragg);
 
+=======
+            support_shift = DiffractionPatterns.shift_object(NW,support_final,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z); 
+            support_shift_final = abs(support_shift>0.1*max(abs(support_shift(:)))) ;
+>>>>>>> e86c20a2ad309f8c58fbdcdf6889a51c977d7dfb
             % phase of the final object at the center pixel:
             Nx_c = round(size(finalobj,1)/2);
             Ny_c = round(size(finalobj,2)/2);
@@ -339,6 +343,9 @@ classdef Phretrieval_functions
             % save non-zero values           
             [index_rho] = find(abs(finalobj(:).*support_shift(:))>1e-16);
             val_rho = finalobj(index_rho);            
+            index_NW = index_rho;
+            val_NW = NW(index_NW);
+>>>>>>> e86c20a2ad309f8c58fbdcdf6889a51c977d7dfb
             
         end
     end
