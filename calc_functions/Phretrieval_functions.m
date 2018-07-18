@@ -237,7 +237,6 @@ classdef Phretrieval_functions
             %{
             for jj= dthsearchind(2:end-1)
                 grad_manual = test_grad_theta_manually(jj,thscan,fitQerr,data_exp(ii),bmtemp,rho,grad_final_theta(ii).grad(jj));
-
             end
         
             %}
