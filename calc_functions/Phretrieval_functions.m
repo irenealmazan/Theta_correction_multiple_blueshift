@@ -294,9 +294,7 @@ classdef Phretrieval_functions
             
             
         end
-        
-       
-        
+               
         function [err,index_NW,val_NW,index_rho,val_rho] = decide_flip(NW,rho,support,angles_list,ki,kf,d2_bragg,X,Y,Z)
             % this function checks wether the retrieved object is flipped
             % with respect to the original one.
@@ -306,7 +304,7 @@ classdef Phretrieval_functions
             finalobj = (ifftn(conj(fftn(rho))));
             [finalobj_shift] = DiffractionPatterns.shift_object(NW,finalobj,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);       
             err_1 = DiffractionPatterns.calculate_error_realspace(abs(NW),abs(finalobj_shift));
-            
+
             % only shift the object
             finalobj_2 = ifftn(fftn(rho));
             [finalobj_2_shift] = DiffractionPatterns.shift_object(NW,finalobj_2,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z);            
@@ -321,6 +319,7 @@ classdef Phretrieval_functions
             end
             
             support_shift = DiffractionPatterns.shift_object(NW,support_final,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z); 
+            support_shift_final = abs(support_shift>0.1*max(abs(support_shift(:)))) ;
             % phase of the final object at the center pixel:
             Nx_c = round(size(finalobj,1)/2);
             Ny_c = round(size(finalobj,2)/2);
@@ -331,10 +330,10 @@ classdef Phretrieval_functions
             phase_offset_NW = angle(NW(Nx_c,Ny_c,Nz_c));
             
             
-            err = DiffractionPatterns.calculate_error_realspace(NW*exp(-1i*phase_offset_NW),finalobj*exp(-1i*phase_offset_finalobj));
+            err = DiffractionPatterns.calculate_error_realspace(NW*exp(-1i*phase_offset_NW),finalobj*exp(-1i*phase_offset_finalobj).*support_shift_final);
             
             % save non-zero values           
-            [index_rho] = find(abs(finalobj(:).*support_shift(:))>0);
+            [index_rho] = find(abs(finalobj(:).*support_shift(:))>1e-16);
             val_rho = finalobj(index_rho);
             index_NW = index_rho;
             val_NW = NW(index_NW);
