@@ -18,13 +18,13 @@ classdef InitializeFunctions
             %% Phase retrieval parameters:
             
             % Iteration parameters:
-            Niter_rho = 1500;
+            Niter_rho = 2000;
             Niter_pos = 1;
             Niter_theta = 1;
             freq_pos = 1;
             %freq_rho = 10;
             freq_store = 100;
-            freq_shrink_wrap = 100;
+            freq_shrink_wrap = 500;
             
             % Beta adaptative step parameters and conjugated gradient restart parameter:
             freq_restart = 20;
