@@ -50,7 +50,7 @@ if flagContinue == 0
     
     %%
      ER_HIO;
-     save([savefolder '/ER_HIO_initial_guess'],'newobj','support_new');
+     save([savefolder '/ER_HIO_initial_guess'],'newobj','support_new','err_ERHIO');
     
 else
     display('CONTINUING A PHASE RETRIEVAL OPERATION');
