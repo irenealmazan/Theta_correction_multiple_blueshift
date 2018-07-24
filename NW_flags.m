@@ -93,4 +93,12 @@ switch (smoothSupportFlag)
         display('USING AN ALREADY CREATED ER_HIO SUPPORT')
 end
 
+flagER_direct = 0;
+if flagER_direct
+   display('Calculating errors in direct space and reciprocal space');
+else
+   display('Calculating errors only in reciprocal space'); 
+end
+
+
 flagContinue = 0;

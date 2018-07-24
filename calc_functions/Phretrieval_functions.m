@@ -260,7 +260,7 @@ classdef Phretrieval_functions
             
         end
         
-        function  [retrphase,newobj,err_ERHIO,struct_rho_iter,counter] = do_ERHIO(err_ERHIO,dp,support,newobj,er_iter,NW,angles_list,ki,kf,probe,d2_bragg,X,Y,Z,plotResults,flagER,struct_rho_iter,counter)
+        function  [retrphase,newobj,err_ERHIO] = do_ERHIO(err_ERHIO,dp,support,newobj,er_iter,NW,angles_list,ki,kf,probe,d2_bragg,X,Y,Z,plotResults,flagER,flagER_direct)
             
             
             
@@ -273,20 +273,21 @@ classdef Phretrieval_functions
                     string_iter = ['HIO_iter'];
                 end
                 
-                finalobj_3DFT = (ifftn(newobj.dp));
+                if flagER_direct
+                    
+                    finalobj_3DFT = (ifftn(newobj.dp));
+                    
+                    finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj_3DFT,angles_list,probe,ki,kf,X,Y,Z);
+                    support_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support,angles_list,probe,ki,kf,X,Y,Z);
+                    
+                    [err,index_NW,val_NW,index_rho,val_rho] = Phretrieval_functions.decide_flip(NW,finalobj_2DFT,support_2DFT,angles_list,ki,kf,d2_bragg,X,Y,Z);
+                    err_ERHIO = [err_ERHIO err];
+                    
+                else
+                    err_ERHIO = 0;
+                end
                 
-                finalobj_2DFT = DiffractionPatterns.From3DFT_to_2DFT(finalobj_3DFT,angles_list,probe,ki,kf,X,Y,Z);
-                support_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support,angles_list,probe,ki,kf,X,Y,Z);
-                
-                [err,index_NW,val_NW,index_rho,val_rho] = Phretrieval_functions.decide_flip(NW,finalobj_2DFT,support_2DFT,angles_list,ki,kf,d2_bragg,X,Y,Z);
-                err_ERHIO = [err_ERHIO err];
-                
-                struct_rho_iter(counter).index_NW = index_NW;
-                struct_rho_iter(counter).val_NW = val_NW;
-                struct_rho_iter(counter).index_rho = index_rho;
-                struct_rho_iter(counter).val_rho = val_rho;
-                
-                display([string_iter num2str(numel(err_ERHIO)) ' error: ' num2str(err) ' chi value: ' num2str(newobj.chi(end)) ' \n'])
+                display([string_iter num2str(numel(newobj.chi)) ' error: ' num2str(err) ' chi value: ' num2str(newobj.chi(end)) ' \n'])
                 
                 counter = counter + 1;
             end
