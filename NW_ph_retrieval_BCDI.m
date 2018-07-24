@@ -76,7 +76,12 @@ if flagContinue == 0
   
    
      [err_ini] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
-     [err_direct] = Phretrieval_functions.decide_flip(NW*sqrt(mncntrate/mn),rho,support_iter,angles_list,ki_o,kf_o,d2_bragg,X,Y,Z);
+     
+     if flagER_direct
+         [err_direct] = Phretrieval_functions.decide_flip(NW*sqrt(mncntrate/mn),rho,support_iter,angles_list,ki_o,kf_o,d2_bragg,X,Y,Z);
+     else
+         err_direct = 0;
+     end
      
     % initial value of the gradient in rho and theta, assumed to be zero
     norm_grad_rho = zeros(Niter_rho,1);
@@ -133,8 +138,11 @@ for nrho = nrho_vect
         [rho,beta_rho(nrho),norm_grad_rho(nrho),gPIEiter,direction_rho] = Phretrieval_functions.rho_update(probe, rho,gPIEiter,direction_rho,angles_list,support_iter, nrho, data_exp,depth,errlist(end),freq_restart,tau_backtrack_rho,beta_ini_rho,counter_max_rho,ki_o,kf_o,X,Y,Z);
         
         [err] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
-        [err_direct] = Phretrieval_functions.decide_flip(NW*sqrt(mncntrate/mn),rho,support_iter,angles_list,ki_o,kf_o,d2_bragg,X,Y,Z);
-        
+        if flagER_direct
+            [err_direct] = Phretrieval_functions.decide_flip(NW*sqrt(mncntrate/mn),rho,support_iter,angles_list,ki_o,kf_o,d2_bragg,X,Y,Z);
+        else
+            err_direct = 0;
+        end
         errlist = [errlist err];
         errlist_direct = [errlist_direct err_direct];
         
@@ -169,8 +177,12 @@ for nrho = nrho_vect
         end
 
         [err] = DiffractionPatterns.calc_error_multiangle(probe, rho, data_exp,angles_list,ki_o,kf_o,X,Y,Z);
-        [err_direct] = Phretrieval_functions.decide_flip(NW*sqrt(mncntrate/mn),rho,support_iter,angles_list,ki_o,kf_o,d2_bragg,X,Y,Z);
-
+        
+        if flagER_direct
+            [err_direct] = Phretrieval_functions.decide_flip(NW*sqrt(mncntrate/mn),rho,support_iter,angles_list,ki_o,kf_o,d2_bragg,X,Y,Z);
+        else
+            err_direct = 0;
+        end
         
         errlist = [errlist err];
         errlist_direct = [errlist_direct err_direct];
@@ -199,8 +211,3 @@ for nrho = nrho_vect
     %}
 
 end
-
-   
-
-
-
