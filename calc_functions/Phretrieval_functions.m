@@ -281,15 +281,17 @@ classdef Phretrieval_functions
                     support_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support,angles_list,probe,ki,kf,X,Y,Z);
                     
                     [err,index_NW,val_NW,index_rho,val_rho] = Phretrieval_functions.decide_flip(NW,finalobj_2DFT,support_2DFT,angles_list,ki,kf,d2_bragg,X,Y,Z);
-                    err_ERHIO = [err_ERHIO err];
+                  
                     
                 else
-                    err_ERHIO = 0;
+                    err = 0;
                 end
+                
+                err_ERHIO = [err_ERHIO err];
                 
                 display([string_iter num2str(numel(newobj.chi)) ' error: ' num2str(err) ' chi value: ' num2str(newobj.chi(end)) ' \n'])
                 
-                counter = counter + 1;
+               
             end
             
             
