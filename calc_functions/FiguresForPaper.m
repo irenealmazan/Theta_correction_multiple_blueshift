@@ -457,7 +457,164 @@ classdef FiguresForPaper
             
         end
         
+        function [] = figure2_rightpanel(NW1,NW2,NW3,titleNW1,titleNW2,titleNW3,phasecolor,window,index,dimension,fig_num)
+            
+            figure(fig_num);
+            clf;
+            
+            
+            
+            for ii = index
+                
+                switch dimension
+                    
+                    case '1'
+                        NW1_to_plot = squeeze(NW1(ii,window(1):window(2),window(3):window(4)));
+                        NW2_to_plot = squeeze(NW2(ii,window(1):window(2),window(3):window(4)));
+                        NW3_to_plot = squeeze(NW3(ii,window(1):window(2),window(3):window(4)));
+                    case '2'
+                        NW1_to_plot = squeeze(NW1(window(1):window(2),ii,window(3):window(4)));
+                        NW2_to_plot = squeeze(NW2(window(1):window(2),ii,window(3):window(4)));
+                        NW3_to_plot = squeeze(NW3(window(1):window(2),ii,window(3):window(4)));
+                    case '3'
+                        NW1_to_plot = NW1(window(1):window(2),window(3):window(4),ii);
+                        NW2_to_plot = NW2(window(1):window(2),window(3):window(4),ii);
+                        NW3_to_plot = NW3(window(1):window(2),window(3):window(4),ii);
+                end
+                
+                
+                subplot(321);
+                imagesc(abs(NW1_to_plot));
+                axis image;
+                colorbar;
+                title([titleNW1]);
+                set(gca,'FontSize',30);
+                axis off;
+                caxis([0 0.095]);
+                
+                subplot(322);
+                imagesc(angle(NW1_to_plot));
+                axis image;
+                colorbar;
+                title([titleNW1 ]);
+                set(gca,'FontSize',30);
+                axis off;
+                caxis(phasecolor);
+                
+                subplot(323);
+                imagesc(abs(NW2_to_plot));
+                axis image;
+                colorbar;
+                title([titleNW2 ]);
+                set(gca,'FontSize',30);
+                axis off;
+                caxis([0 0.095]);
+                
+                subplot(324);
+                imagesc(angle(NW2_to_plot));
+                axis image;
+                colorbar;
+                title([titleNW2 ]);
+                set(gca,'FontSize',30);
+                axis off;
+                caxis(phasecolor);
+                
+                
+                subplot(325);
+                imagesc(abs(NW3_to_plot));
+                axis image;
+                colorbar;
+                title([titleNW3 ]);
+                set(gca,'FontSize',30);
+                axis off;
+                caxis([0 0.095]);
+                
+                subplot(326);
+                imagesc(angle(NW3_to_plot));
+                axis image;
+                colorbar;
+                title([titleNW3 ]);
+                set(gca,'FontSize',30);
+                axis off;
+                caxis(phasecolor);
+                
+                pause(.5);
+                
+                
+                
+            end
+            
+            
+            
+            
+        end
         
+        function [support_new_shift_final,support_new_shift_vector] = figure2_preparesupport(jitter,noiselevel,NW,support_new,angles_list,probe,ki_o,kf_o,X,Y,Z,d2_bragg)
+           
+            switch jitter
+                case '0'
+                    
+                    if strcmp(noiselevel,'0')
+                        support_new_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support_new,angles_list,probe,ki_o,kf_o,X,Y,Z);
+                        support_new_2DFT_conj = ifftn(conj(fftn(support_new_2DFT)));
+                        [support_new_shift,support_new_shift_vector] = DiffractionPatterns.shift_object(NW,support_new_2DFT_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+                        support_shift_abs = abs(support_new_shift);
+                        support_new_shift_final = (support_shift_abs>0.1*max(support_shift_abs(:)));
+                                                
+                    else
+                        
+                        support_new_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support_new,angles_list,probe,ki_o,kf_o,X,Y,Z);
+                        support_new_2DFT_conj = ifftn(conj(fftn(support_new_2DFT)));
+                        [support_new_shift,support_new_shift_vector] = DiffractionPatterns.shift_object(NW,support_new_2DFT_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+                        support_new_shift_final = (support_new_shift > 0.1*max(abs(support_new_shift(:))));
+                        
+                    end
+                    
+                case '5'
+                    
+                    if strcmp(noiselevel,'0')
+                        support_new_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support_new,angles_list,probe,ki_o,kf_o,X,Y,Z);
+                        [support_new_shift,support_new_shift_vector] = DiffractionPatterns.shift_object(NW,support_new_2DFT,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+                        support_new_shift_final = (support_new_shift > 0.1*max(abs(support_new_shift(:))));
+                                                
+                    else
+                        
+                        support_new_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support_new,angles_list,probe,ki_o,kf_o,X,Y,Z);
+                        [support_new_shift,support_new_shift_vector] = DiffractionPatterns.shift_object(NW,support_new_2DFT,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+                        support_new_shift_final = (support_new_shift > 0.1*max(abs(support_new_shift(:))));
+                        
+                    end
+  %{                  
+                case '10'
+                    
+                    if strcmp(noislevel,'0')
+                        
+                    else
+                        
+                    end
+                    
+                case '20'
+                    
+                    if strcmp(noislevel,'0')
+                        
+                    else
+                        
+                    end
+                    
+                case '40'
+                    
+                    if strcmp(noislevel,'0')
+                        
+                    else
+                        
+                    end
+            %}        
+            end
+            
+            
+            DisplayResults.compare_two_objects(NW,support_new_shift_final,'','',[40 90 40 90],[65],'3',31);
+            
+        end
         
     end
     
