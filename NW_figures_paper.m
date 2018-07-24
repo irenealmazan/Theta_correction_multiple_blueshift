@@ -60,7 +60,7 @@ set(ax,'FontSize',20);
 %results of algorithm object/angle
 
 % flip is required for jitter_0_noiselevel_0, jitter_5_noiselevel_0, 
-flipflag = 1;
+flipflag = 0;
 
 if flipflag 
     rho_plot = ifftn(conj(fftn(rho)));
@@ -101,7 +101,7 @@ rho_2DFT = DiffractionPatterns.From3DFT_to_2DFT(rho_3DFT_toplot,angles_list,prob
 phase_rho_2DFT_shift = angle(rho_2DFT_shift(65,65,65));
 
 % test phase ofset:
-DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn).*conj(NW),rho_shift.*support_shift_fin.*conj(NW)*exp(-1i*phase_rho_shift)*exp(-1i*1.56),'','',[40 90],[65 65],'23',31);
+DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn).*conj(NW),rho_shift.*support_shift_fin.*conj(NW)*exp(-1i*phase_rho_shift)*exp(-1i*1.6),'','',[40 90],[65 65],'23',31);
 DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn).*conj(NW),rho_2DFT_shift*exp(-1i*phase_rho_2DFT_shift).*support_new_shift_final.*conj(NW)*exp(-1i*1.5),'','',[40 90],[65 65],'23',32);
 
 DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn),rho_shift,'','',[40 90],[65 65],'23',41);
@@ -111,16 +111,16 @@ DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn),rho_2DFT_shift,'','',[4
 % figures:
 
 phase_color = [0 2.1];
-FiguresForPaper.figure2_rightpanel(NW*sqrt(mncntrate/mn)*exp(-1i*phase_NW),rho_2DFT_shift*exp(-1i*phase_rho_2DFT_shift).*support_new_shift_final,rho_shift.*exp(-1i*phase_rho_shift).*support_shift_fin ,'','','',phase_color,[40 90 40 90],[65],'3',26);
+FiguresForPaper.figure2_rightpanel(NW*sqrt(mncntrate/mn)*exp(-1i*phase_NW),rho_2DFT_shift*exp(-1i*phase_rho_2DFT_shift).*support_new_shift_final,rho_shift.*exp(-1i*phase_rho_shift).*support_shift_fin,'','','',phase_color,[40 90 40 90],[65],'3',26);
 
 phase_color = [-0.5 0.5];
-FiguresForPaper.figure2_rightpanel(NW*sqrt(mncntrate/mn).*conj(NW),rho_2DFT_shift*exp(-1i*phase_rho_2DFT_shift).*conj(NW).*support_new_shift_final*exp(-1i*1.0),rho_shift.*conj(NW)*exp(-1i*phase_rho_shift)*exp(-1i*1.0).*support_shift_fin ,'','','',phase_color,[40 90 40 90],[65],'3',27);
+FiguresForPaper.figure2_rightpanel(NW*sqrt(mncntrate/mn).*conj(NW),rho_2DFT_shift*exp(-1i*phase_rho_2DFT_shift).*conj(NW).*support_new_shift_final*exp(-1i*1.5),rho_shift.*conj(NW)*exp(-1i*phase_rho_shift)*exp(-1i*1.6).*support_shift_fin ,'','','',phase_color,[40 90 40 90],[65],'3',27);
 
 
 
 %%%%%%%%%%%%%% Figure 4: angle correction:
 [theta_iter] = DisplayResults.read_angles_iterations(data_exp,delta_thscanvals,delta_thscanvals);
-DisplayResults.display_all_angles_oneiterations_errorrel(theta_iter,data_exp,dth_disp,[1 800 2000],'absolute',1025);
+DisplayResults.display_all_angles_oneiterations_errorrel(theta_iter,data_exp,dth_disp,[1 cnt_ntheta],'absolute',1025);
 
 %%%%%%%%%%%% Saving figures:
 
@@ -179,6 +179,10 @@ plot(jitterlevel_summary,log10(chi_final));
 xlabel('% of angular jitter');ylabel('log(\epsilon)');
 ax = gca;
 set(ax,'FontSize',20);
+
+figure(3);
+savefig('results_sim_blueshift/chi_vs_jitter.fig');
+
 
 subplot(122);
 plot(jitterlevel_summary,log10(chi_direct_final));
