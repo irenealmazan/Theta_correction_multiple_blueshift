@@ -142,6 +142,11 @@ figure(1025);
 savefig([folder_str 'figure4_anglecorrection.fig']);
 
 
+
+
+%%%%%%%% Figure 5: comparison of the quality of the reconstruction for
+%%%%%%%% different jittering and different levels of noise
+
 jitterlevel_summary = [0 5 10 20 40];
 
 for kk = 1:numel(jitterlevel_summary)
@@ -150,8 +155,12 @@ for kk = 1:numel(jitterlevel_summary)
     load([savefolder '/results.mat']);
     struct_err(kk).chi = [newobj.chi' errlist];
     struct_err(kk).chid_direct = [err_ERHIO errlist_direct];
+    struct_err(kk).rho = rho;
+    struct_err(kk).support_iter = support_iter;
+   
 end
 
+save('results_sim_blueshift/struct_err_level0.mat','struct_err');
 
 
 
@@ -161,14 +170,72 @@ for kk = 1:numel(struct_err)
     chi_direct_final(kk) = struct_err(kk).chid_direct(end);
 end
 
-save('results_sim_blueshift/struct_err_level0.mat','struct_err','chi_final','chi_direct_final');
 
 
 figure;
-subplot(121);
+%subplot(121);
 plot(jitterlevel_summary,log10(chi_final));
-title('recip');
+%title('recip');
+xlabel('% of angular jitter');ylabel('log(\epsilon)');
+ax = gca;
+set(ax,'FontSize',20);
 
 subplot(122);
 plot(jitterlevel_summary,log10(chi_direct_final));
 title('direct');
+
+flipflag_list = [1 1 0 0 1];
+phaseoffset = [1.55 1.58 1.43 1.545 1.01];
+
+for kk = 1:numel(struct_err)
+    
+    flipflag = flipflag_list(kk);
+    
+    if flipflag
+        rho_plot = ifftn(conj(fftn(struct_err(kk).rho)));
+        support_plot = abs(ifftn(conj(fftn(struct_err(kk).support_iter))));
+    else
+        rho_plot = struct_err(kk).rho;
+        support_plot = struct_err(kk).support_iter;
+    end
+    
+    
+    rho_shift = DiffractionPatterns.shift_object(NW*sqrt(mncntrate/mn),rho_plot,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+    
+    
+    support_shift = DiffractionPatterns.shift_object(abs(NW*sqrt(mncntrate/mn)),support_plot,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+    support_shift_abs = abs(support_shift);
+    support_shift_fin = (support_shift_abs>0.1*max(support_shift_abs(:)));
+    
+    
+    phase_rho_shift = angle(rho_shift(65,65,65));
+    phase_NW = angle(NW(65,65,65));
+    
+    
+    struct_toplot(kk).rho_shift = rho_shift*exp(-1i*phase_rho_shift).*support_shift_fin;
+    struct_toplot(kk).support_shift_fin = support_shift_fin;
+    struct_toplot(kk).rho_nophase = rho_shift.*conj(NW)*exp(-1i*phase_rho_shift).*support_shift_fin*exp(-1i*phaseoffset(kk));
+    
+    
+    
+end
+
+fig_num = 30;
+phase_color = [0 2.1];
+phase_color_2 = [-0.1 0.1];
+FiguresForPaper.figure5_bottompanel(struct_toplot,phase_color,phase_color_2,[40 90 40 90],[65],'3',fig_num);
+
+% check phase offset
+
+DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn).*conj(NW),struct_toplot(1).rho_nophase,'','',[40 90],[65 65],'23',42);
+DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn).*conj(NW),struct_toplot(2).rho_nophase,'','',[40 90],[65 65],'23',42);
+DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn).*conj(NW),struct_toplot(3).rho_nophase,'','',[40 90],[65 65],'23',42);
+DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn).*conj(NW),struct_toplot(4).rho_nophase,'','',[40 90],[65 65],'23',42);
+DisplayResults.compare_two_objects(NW*sqrt(mncntrate/mn).*conj(NW),struct_toplot(5).rho_nophase,'','',[40 90],[65 65],'23',42);
+
+
+figure(fig_num);
+savefig('results_sim_blueshift/rho_alljitter_noiselevel0.fig');
+
+save('results_sim_blueshift/rhostructtoplot_level0.mat','struct_toplot','flipflag_list','phaseoffset');
+

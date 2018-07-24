@@ -549,6 +549,77 @@ classdef FiguresForPaper
             
         end
         
+        
+         function [] = figure5_bottompanel(struct_toplot,phasecolor,phasecolor_2,window,index,dimension,fig_num)
+            
+            figure(fig_num);
+            clf;
+            
+            
+            
+            for jj = 1:numel(struct_toplot)
+                
+                NW1_3D = struct_toplot(jj).rho_shift;
+                support_3D = struct_toplot(jj).support_shift_fin;
+                
+                NW1_3D_nophase = struct_toplot(jj).rho_nophase;
+                
+                for ii = index
+                    
+                    switch dimension
+                        
+                        case '1'
+                            NW1_to_plot = squeeze(NW1_3D(ii,window(1):window(2),window(3):window(4)));
+                            NW1_nophase = squeeze(NW1_3D_nophase(ii,window(1):window(2),window(3):window(4)));
+                        case '2'
+                            NW1_to_plot = squeeze(NW1_3D(window(1):window(2),ii,window(3):window(4)));
+                            NW1_nophase = squeeze(NW1_3D_nophase(window(1):window(2),ii,window(3):window(4)));
+                        case '3'
+                            NW1_to_plot = NW1_3D(window(1):window(2),window(3):window(4),ii);
+                            NW1_nophase = NW1_3D_nophase(window(1):window(2),window(3):window(4),ii);
+                    end
+                    
+
+                    
+                    
+                    subplot(3,numel(struct_toplot),jj);
+                    imagesc(abs(NW1_to_plot));
+                    axis image;
+                    colorbar;          
+                    set(gca,'FontSize',30);
+                    axis off;
+                    caxis([0 0.095]);
+                    
+                    subplot(3,numel(struct_toplot),numel(struct_toplot)+jj);
+                    imagesc(angle(NW1_to_plot));
+                    axis image;
+                    colorbar;
+                    set(gca,'FontSize',30);
+                    axis off;
+                    caxis(phasecolor);
+                    
+                    subplot(3,numel(struct_toplot),2*numel(struct_toplot)+jj);
+                    imagesc(angle(NW1_nophase));
+                    axis image;
+                    colorbar;
+                    set(gca,'FontSize',30);
+                    axis off;
+                    caxis(phasecolor_2);
+                    
+                    
+                    pause(.5);
+                    
+                    
+                    
+                end
+                
+            end
+            
+            
+        end
+        
+        
+        
         function [support_new_shift_final,support_new_shift_vector] = figure2_flipsupport(flipflag,NW,support_new,angle_list,probe,ki_o,kf_o,X,Y,Z,d2_bragg)
             
             support_new_2DFT_ini = DiffractionPatterns.From3DFT_to_2DFT(support_new,angle_list,probe,ki_o,kf_o,X,Y,Z);
