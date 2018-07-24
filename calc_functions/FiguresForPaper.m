@@ -549,67 +549,22 @@ classdef FiguresForPaper
             
         end
         
-        function [support_new_shift_final,support_new_shift_vector] = figure2_preparesupport(jitter,noiselevel,NW,support_new,angles_list,probe,ki_o,kf_o,X,Y,Z,d2_bragg)
-           
-            switch jitter
-                case '0'
-                    
-                    if strcmp(noiselevel,'0')
-                        support_new_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support_new,angles_list,probe,ki_o,kf_o,X,Y,Z);
-                        support_new_2DFT_conj = ifftn(conj(fftn(support_new_2DFT)));
-                        [support_new_shift,support_new_shift_vector] = DiffractionPatterns.shift_object(NW,support_new_2DFT_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
-                        support_shift_abs = abs(support_new_shift);
-                        support_new_shift_final = (support_shift_abs>0.1*max(support_shift_abs(:)));
-                                                
-                    else
-                        
-                        support_new_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support_new,angles_list,probe,ki_o,kf_o,X,Y,Z);
-                        support_new_2DFT_conj = ifftn(conj(fftn(support_new_2DFT)));
-                        [support_new_shift,support_new_shift_vector] = DiffractionPatterns.shift_object(NW,support_new_2DFT_conj,angles_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
-                        support_new_shift_final = (support_new_shift > 0.1*max(abs(support_new_shift(:))));
-                        
-                    end
-                    
-                case '5'
-                    
-                    if strcmp(noiselevel,'0')
-                        support_new_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support_new,angles_list,probe,ki_o,kf_o,X,Y,Z);
-                        [support_new_shift,support_new_shift_vector] = DiffractionPatterns.shift_object(NW,support_new_2DFT,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
-                        support_new_shift_final = (support_new_shift > 0.1*max(abs(support_new_shift(:))));
-                                                
-                    else
-                        
-                        support_new_2DFT = DiffractionPatterns.From3DFT_to_2DFT(support_new,angles_list,probe,ki_o,kf_o,X,Y,Z);
-                        [support_new_shift,support_new_shift_vector] = DiffractionPatterns.shift_object(NW,support_new_2DFT,delta_thscanvals,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
-                        support_new_shift_final = (support_new_shift > 0.1*max(abs(support_new_shift(:))));
-                        
-                    end
-  %{                  
-                case '10'
-                    
-                    if strcmp(noislevel,'0')
-                        
-                    else
-                        
-                    end
-                    
-                case '20'
-                    
-                    if strcmp(noislevel,'0')
-                        
-                    else
-                        
-                    end
-                    
-                case '40'
-                    
-                    if strcmp(noislevel,'0')
-                        
-                    else
-                        
-                    end
-            %}        
+        function [support_new_shift_final,support_new_shift_vector] = figure2_flipsupport(flipflag,NW,support_new,angle_list,probe,ki_o,kf_o,X,Y,Z,d2_bragg)
+            
+            support_new_2DFT_ini = DiffractionPatterns.From3DFT_to_2DFT(support_new,angle_list,probe,ki_o,kf_o,X,Y,Z);
+            
+            
+            if flipflag == 1
+                support_new_2DFT = ifftn(conj(fftn(support_new_2DFT_ini)));
+            else
+                support_new_2DFT = support_new_2DFT_ini;
             end
+            
+            [support_new_shift,support_new_shift_vector] = DiffractionPatterns.shift_object(NW,support_new_2DFT,angle_list,ki_o,kf_o,kf_o-ki_o,d2_bragg,X,Y,Z);
+            
+            support_shift_abs = abs(support_new_shift);
+            support_new_shift_final = (support_shift_abs>0.1*max(support_shift_abs(:)));
+            
             
             
             DisplayResults.compare_two_objects(NW,support_new_shift_final,'','',[40 90 40 90],[65],'3',31);
