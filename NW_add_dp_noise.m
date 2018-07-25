@@ -4,24 +4,38 @@
 
 mn = mean(data_exp(middpind).simI(:));
 noise_data = zeros(size(X));
-if (noiseflag)
-    for ii=1:numel(data_exp)
-        
+clean_data = zeros(size(X));
+only_noise= zeros(size(X));
+
+for ii=1:numel(data_exp)
+
+    if (noiseflag)
         if(mod(ii,50)==0) display(['adding noise to sim dp ' num2str(ii) ' of ' num2str(numel(data_exp))]); end
         data_exp(ii).noiseI = poisrnd( data_exp(ii).simI /mn * mncntrate);
-        noise_data(:,:,ii) = data_exp(ii).noiseI;
-        %data_exp(ii).simI = poisrnd( data_exp(ii).simI);
-        %data_exp(ii).simI = data_exp(ii).simI;
+    else
+        data_exp(ii).noiseI = ( data_exp(ii).simI /mn * mncntrate);
     end
-    phase_NW = angle(fftshift(fftn(fftshift(NW))));
-    noise_NW = fftshift(ifftn(fftshift(sqrt(noise_data).*exp(1i*phase_NW))));
+
+    clean_data(:,:,ii) = data_exp(ii).simI /mn * mncntrate;
+    noise_data(:,:,ii) = data_exp(ii).noiseI;
+    only_noise(:,:,ii) = noise_data(:,:,ii) - clean_data(:,:,ii);
     
-    if plotResults
-        fig_num = 401;
-        dimension = '2';
-        DisplayResults.compare_two_objects(NW,noise_NW,'Original object','Compatible object',[50 80 50 80],64,dimension,fig_num);
-    end
 end
+
+% signal_to_noise ratio:
+snr = sum(sum(sum(clean_data.^2)))/sum(sum(sum(only_noise.^2)));
+
+phase_NW = angle(fftshift(fftn(fftshift(NW))));
+noise_NW = fftshift(ifftn(fftshift(sqrt(noise_data).*exp(1i*phase_NW))));
+
+if plotResults
+fig_num = 401;
+dimension = '2';
+DisplayResults.compare_two_objects(NW,noise_NW,'Original object','Compatible object',[50 80 50 80],64,dimension,fig_num);
+end
+    
+
+
 %%
 
 %%
@@ -51,7 +65,7 @@ if plotResults
     ca = [0 2];
     for ii=1:numel(data_exp)
         subplot(121);
-        imagesc( (data_exp(ii).I));axis image;colorbar;
+        imagesc( log10(sqrt(data_exp(ii).I)));axis image;colorbar;
         
         drawnow;
         subplot(122);
@@ -73,3 +87,5 @@ if plotResults
         DisplayResults.show_rocking_curve(delta_thscanvals+dth_disp',rock_curve_noise,'new',8,'r','true using 2D FT');
     end
 end
+
+
