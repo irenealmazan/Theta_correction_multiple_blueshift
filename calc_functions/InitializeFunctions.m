@@ -55,7 +55,7 @@ classdef InitializeFunctions
             Npix = 128;
             detdist = 0.529e6; % in micrometers
             d2_bragg = detdist * lam /(Npix*pixsize);
-            depth = 128;%60;
+            depth = 70;%128;%60;
             defocus = 0;
             
             % expected values of the motors for m-plane

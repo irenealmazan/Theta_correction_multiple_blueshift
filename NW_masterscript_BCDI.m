@@ -30,7 +30,7 @@ if flagContinue == 0
     NW_diff_vectors_BCDI; % does both the vectors ki and kf and creates the object
     
    % load sample
-    load('../results_files/Original_Sample');
+    load('../results_files/Original_Sample_70angles');
     
     if(addNWstrain)
         NW  = img;

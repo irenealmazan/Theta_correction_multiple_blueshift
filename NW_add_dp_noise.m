@@ -31,7 +31,7 @@ noise_NW = fftshift(ifftn(fftshift(sqrt(noise_data).*exp(1i*phase_NW))));
 if plotResults
 fig_num = 401;
 dimension = '2';
-DisplayResults.compare_two_objects(NW,noise_NW,'Original object','Compatible object',[50 80 50 80],64,dimension,fig_num);
+DisplayResults.compare_two_objects(NW,noise_NW,'Original object','Compatible object',[50 80 1 70],64,dimension,fig_num);
 end
     
 
@@ -65,7 +65,7 @@ if plotResults
     ca = [0 2];
     for ii=1:numel(data_exp)
         subplot(121);
-        imagesc( log10(sqrt(data_exp(ii).I)));axis image;colorbar;
+        imagesc(data_exp(ii).I);axis image;colorbar;
         
         drawnow;
         subplot(122);
