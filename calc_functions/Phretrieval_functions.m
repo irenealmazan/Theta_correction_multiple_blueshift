@@ -16,7 +16,9 @@ classdef Phretrieval_functions
            
             range = [-20:20]+65;
             
-            sup(range,range,range) = ones(numel(range),numel(range),numel(range));
+            range2 = [-20:20]+65;
+            
+            sup(range,range,range2) = ones(numel(range),numel(range),numel(range2));
             
             
             for ii=1:numel(data_exp)
@@ -249,7 +251,7 @@ classdef Phretrieval_functions
            % between 0 and percentage*diff(delta_thsanvals)
             
            delta_theta = unique(diff(delta_thscanvals));
-           delta_theta_ini = delta_theta; % corresponds to 100 % jitter
+           delta_theta_ini = delta_theta(1); % corresponds to 100 % jitter
            
            dth_disp = zeros(numel(delta_thscanvals),1);
 
