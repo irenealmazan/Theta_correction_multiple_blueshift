@@ -323,6 +323,7 @@ classdef Phretrieval_functions
             end
             
             support_shift = DiffractionPatterns.shift_object(NW,support_final,angles_list,ki,kf,kf-ki,d2_bragg,X,Y,Z); 
+            support_shift_abs = abs(support_shift);            
             support_shift_final = abs(support_shift>0.1*max(abs(support_shift(:)))) ;
             % phase of the final object at the center pixel:
             Nx_c = round(size(finalobj,1)/2);
@@ -344,6 +345,8 @@ classdef Phretrieval_functions
             val_NW = NW(index_NW);
             
         end
+        
+        
     end
         
    

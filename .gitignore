@@ -3,6 +3,9 @@
 ## We have git for backups!
 ##---------------------------------------------------
 
+# fig files
+*.fig
+
 #pdf files
 *.pdf
 
